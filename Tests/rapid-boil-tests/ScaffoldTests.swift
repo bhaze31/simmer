@@ -10,7 +10,7 @@ final class ScaffoldTests: XCTestCase {
         import Fluent
 
         final class User: Model {
-            static let schema = "user"
+            static let schema = "users"
 
             struct FieldKeys {
                 static var id: FieldKey { "id" }

@@ -85,13 +85,18 @@ final class ModelGenerator {
 
         // TODO: Implement check for Int id flag
         let modelFields = generateFields(fields: fs, hasTimestamps: hasTimestamps)
+        var schema = name.lowercased()
         
+        if schema.last != "s" {
+            schema += "s"
+        }
+
         let model = """
         import Vapor
         import Fluent
         
         final class \(name.capitalized): Model {
-            static let schema = \"\(name.lowercased())\"
+            static let schema = \"\(schema)\"
         
             struct FieldKeys {
                 \(fieldKeys)
