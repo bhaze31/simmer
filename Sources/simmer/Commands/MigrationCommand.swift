@@ -125,7 +125,7 @@ final class MigrationCommand: ParsableCommand {
     @Argument(help: "The name of the migration to generate")
     private var name: String
     
-    @Argument(help: "Fields for migration, io")
+    @Argument(help: "Fields for migration")
     private var fields: [String] = []
     
     @Option(help: "The name of the model to use, if not defined in the migration name")
@@ -137,23 +137,24 @@ final class MigrationCommand: ParsableCommand {
     @Flag(name: [.customShort("m"), .long], help: "Use AutoMigrate class for migrations")
     private var autoMigrate = false
     
-    @Flag(name: [.customShort("a"), .customLong("async")], help: "Create an async migration")
-    private var isAsync = false
+    @Flag(name: [.customShort("a"), .customLong("async")], inversion: .prefixedNo, help: "Create an async migration")
+    private var isAsync = true
     
-    @Flag(name: .shortAndLong, help: "Use strings as opposed to field keys")
+    @Flag(name: .shortAndLong, help: "Use strings for the migration field name as opposed to field keys")
     private var stringTypes = false
     
-    @Flag(name: .long, help: "Skip model if migration type is Create")
+    @Flag(name: .long, help: "Skip model generation if migration type is Create")
     private var skipModel = false
     
-    @Flag(name: [.long, .customShort("d")], help: "If creating a model, use soft delete for this model. Otherwise ignored")
+    @Flag(name: [.long, .customShort("d")], help: "If creating a model, use soft delete for this model")
      private var softDelete = false
 
-    @Flag(name: [.long, .customShort("t")], help: "Skip timestamps if the creating a model. Otherwise ignored")
+    @Flag(name: [.long, .customShort("t")], help: "Skip timestamps if the creating a model")
     private var skipTimestamps = false
     
     func run() throws {
         let modelOptions = MigrationModelOptions(softDelete: softDelete, skipTimestamps: skipTimestamps)
+
         let options = MigrationOptions(
             name: name,
             fields: fields,

@@ -55,6 +55,9 @@ final class MigrationLoader {
 	}
     
     static func generateEmptyMigration(_ options: MigrationOptions) {
+      
+        let migrationName = "M\(options.timestamp)_\(options.name)"
+
         let migrationSignature = getMigrationSignature(useAutoMigration: options.isAutoMigrate, useAsyncMigration: options.isAsync) + "}"
         
         let revertSignature = getRevertSignature(useAutoMigration: options.isAutoMigrate, useAsyncMigration: options.isAsync) + "}"
@@ -62,8 +65,17 @@ final class MigrationLoader {
         let migration = getInitialMigrationFile(options: options)
             .swap("::migrate::", to: migrationSignature)
             .swap("::revert::", to: revertSignature)
+            .swap("::migration_name::", to: migrationName)
         
-        print(migration)
+      print(migration)
+        FileHandler.createFileWithContents(
+          migration,
+          fileName: migrationName,
+          path: PathGenerator.load(
+            path: .Migrations,
+            name: "App"
+          )
+        )
     }
     
     static func createModel(_ options: MigrationOptions) {
@@ -86,15 +98,12 @@ final class MigrationLoader {
             useAsyncMigration: options.isAsync
         )
         
-        let migrationName = "M\(options.timestamp)_\(options.name)"
-        
         let nameInfo = getNames(useAutoMigration: options.isAutoMigrate)
         
 
         let migration = FileHandler.fetchDefaultFile("Migration")
             .swap("::imports::", to: imports)
             .swap("::migration_type::", to: migrationType)
-            .swap("::migration_name::", to: migrationName)
             .swap("::names::", to: nameInfo)
         
         return migration
@@ -102,10 +111,10 @@ final class MigrationLoader {
     
     static func getImports(useAutoMigrator: Bool) -> String {
         if useAutoMigrator {
-            return "import Foundation\nimport AutoMigrator"
+            return "import Foundation\nimport Fluent\nimport AutoMigrator"
         }
         
-        return "import Foundation"
+        return "import Foundation\nimport Fluent"
     }
     
     static func getMigrationType(useAutoMigrator: Bool, useAsyncMigration: Bool) -> String {

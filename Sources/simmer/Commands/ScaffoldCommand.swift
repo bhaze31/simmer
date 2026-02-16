@@ -41,6 +41,7 @@ final class ScaffoldCommand: ParsableCommand {
             softDelete: softDelete
         )
         
+      
         
     }
 }
